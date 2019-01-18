@@ -1,0 +1,7 @@
+db/local_oracle
+db/*.sqlite3
+log/*
+tmp
+storage
+.bundle
+.git

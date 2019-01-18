@@ -1,0 +1,74 @@
+version: '3.7'
+
+x-logging:
+  &splunk-logging
+  options:
+    splunk-token: ${SPLUNK_TOKEN}
+    splunk-url: ${SPLUNK_URL}
+    splunk-format: json
+    splunk-insecureskipverify: "true"
+    splunk-index: intranet
+    tag: "{{.Name}}/{{.ID}}"
+    labels: com.docker.stack.namespace,service,myapp,com.docker.swarm.service.name,com.docker.swarm.task.name
+    env: RAILS_ENV
+  driver: splunk
+
+services:
+  app:
+    image: "${APP_REGISTRY_PATH}:${VERSION:-latest}"
+    environment:
+      - RAILS_SERVE_STATIC_FILES=true
+      - RAILS_ENV=${RAILS_ENV}
+      - RAILS_MASTER_KEY=${RAILS_MASTER_KEY}
+    volumes:
+      - public:/volumes/public
+    networks:
+      - default
+    logging: *splunk-logging
+    deploy:
+      replicas: 1 
+      update_config:
+        parallelism: 1
+        failure_action: rollback
+        monitor: 1m
+        order: start-first
+      rollback_config:
+        monitor: 1m
+        order: start-first
+
+  web:
+    image: nginx
+    deploy:
+      labels:
+        com.df.notify: "true"
+        com.df.distribute: "true"
+        com.df.serviceDomain: "${SERVICE_NAME}.${SUBDOMAIN}.${DOMAIN}"
+        com.df.servicePath: "/"
+        com.df.port: "80"
+    environment:
+      - RAILS_ROOT=/app
+    volumes:
+      - public:/app/public
+    networks:
+      - proxy
+      - default
+    depends_on:
+      - app
+    configs:
+      - source: nginx.conf
+        target: /etc/nginx/conf.d/default.conf
+        mode: 0440
+    logging: *splunk-logging
+
+volumes:
+  public:
+
+configs:
+  nginx.conf:
+    external: true
+
+networks:
+  proxy:
+    external: true
+  default:
+    external: false

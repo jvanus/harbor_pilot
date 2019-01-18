@@ -9,9 +9,9 @@ Gem::Specification.new do |spec|
   spec.version     = HarborPilot::VERSION
   spec.authors     = [""]
   spec.email       = [""]
-  spec.homepage    = "TODO"
-  spec.summary     = "TODO: Summary of HarborPilot."
-  spec.description = "TODO: Description of HarborPilot."
+  spec.homepage    = "https://github.com"
+  spec.summary     = "Dockerize your rails."
+  # spec.description = "TODO: Description of HarborPilot."
   spec.license     = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'

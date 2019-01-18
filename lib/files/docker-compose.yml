@@ -1,0 +1,37 @@
+version: '3.3'
+
+services:
+  app:
+    build:
+      context: .
+    image: <%= registry_url %>/<%= File.split(Dir.pwd).last %>
+    environment:
+      - RAILS_SERVE_STATIC_FILES=true
+      - RAILS_ENV=${RAILS_ENV}
+      - ORACLE_SYSTEM_PASSWORD=Oradoc_db1
+    volumes:
+      - public:/app/public
+      - .:/app
+    depends_on:
+      - db
+  web:
+    image: nginx
+    environment:
+      - RAILS_ROOT=/app
+    volumes:
+      - public:/app/public
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+  db:
+    image: store/oracle/database-enterprise:12.2.0.1-slim
+    ports:
+      - "1521:1521"
+    volumes:
+      - ./db/local_oracle:/ORCL
+
+volumes:
+  public:
