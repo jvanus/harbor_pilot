@@ -46,7 +46,7 @@ def filter_secrets(hash)
 end
 
 def print_and_run(cmd)
-  stop_if_key_missing  # TODO: move this maybe
+  # stop_if_key_missing  # TODO: move this maybe
 
   unless @have_printed_env_before
     puts "\nEnvironment:"

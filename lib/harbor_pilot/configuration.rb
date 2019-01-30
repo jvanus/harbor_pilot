@@ -15,7 +15,7 @@ module HarborPilot
 
     def initialize(config_path: HarborPilot::Engine.root.join("config/credentials.yml.enc"),
                    key_path: HarborPilot::Engine.root.join("config/master.key"), 
-                   env_key: "RAILS_MASTER_KEY", 
+                   env_key: key, 
                    raise_if_missing_key: true)
       super config_path: config_path, 
             key_path: key_path,
